@@ -16,11 +16,11 @@ int main() {
     if (resultado == 0) {
         ppid = getppid();
 
-        printf("Eu sou o processo filho, meu PID é %d e meu pai tem PID=%d.\n", pid, ppid);
+        printf("Eu sou o processo filho, meu PID ï¿½ %d e meu pai tem PID=%d.\n", pid, ppid);
     }
 
     if (resultado > 0) {
-        printf("Eu sou o processo pai, meu PID é %d e meu filho tem PID=%d.\n", pid, resultado);
+        printf("Eu sou o processo pai, meu PID ï¿½ %d e meu filho tem PID=%d.\n", pid, resultado);
         waitpid(resultado, NULL, 0);
     }
 }
