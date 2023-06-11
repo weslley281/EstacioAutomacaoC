@@ -4,9 +4,12 @@
 #include <unistd.h>
 #include <sched.h>
 #include <sys/wait.h>
+#include <locale.h>
 
 #define TAMANHO_PILHA 65536
 #define _1SEGUNDO 1000000
+
+setlocale(LC_ALL, "Portuguese");
 
 int global = 0; // Variável global alterada pelos threads
 
@@ -23,25 +26,30 @@ printf("Saindo do thread [%d]\n", id);
 }
 
 int main () {
-void *pilha;
-int i, pid[3];
-int id[3] = {1,2,3}; // Identificação a ser passada para cada thread
+    void *pilha;
+    int i, pid[3];
+    int id[3] = {1,2,3}; // Identificação a ser passada para cada thread
 
-for (i=0; i<3; i++) { // Alocando espaço para a pilha de cada thread
-if ((pilha = malloc(TAMANHO_PILHA)) == 0) {
-perror("Erro na alocação da pilha.");
-exit(1);
-}
-pid[i] = clone(funcaoThread,
-pilha + TAMANHO_PILHA,
-CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | SIGCHLD,
-&(id[i])); // Criação de cada thread
-}
-printf("Thread principal aguardando demais threads terminarem.\n");
-for (i=0; i < 3; i++)
-if (waitpid(pid[i], 0, 0) == -1) { // Aguarda até o término do thread
-perror("waitpid")
-exit(2);
-}
-printf("Thread principal terminando.\n\n");
+    for (i=0; i<3; i++) { // Alocando espaço para a pilha de cada thread
+        if ((pilha = malloc(TAMANHO_PILHA)) == 0) {
+            perror("Erro na alocação da pilha.");
+            exit(1);
+        }
+    
+        pid[i] = clone(funcaoThread,
+        pilha + TAMANHO_PILHA,
+        CLONE_VM | CLONE_FS | CLONE_FILES | CLONE_SIGHAND | SIGCHLD,
+        &(id[i])); // Criação de cada thread
+    }
+
+    printf("Thread principal aguardando demais threads terminarem.\n");
+    
+    for (i=0; i < 3; i++){
+        if (waitpid(pid[i], 0, 0) == -1) { // Aguarda até o término do thread
+            perror("waitpid")
+            exit(2);
+        }
+    }
+        
+    printf("Thread principal terminando.\n\n");
 }
